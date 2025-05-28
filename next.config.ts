@@ -5,39 +5,37 @@ const nextConfig: NextConfig = {
   // ERROR BYPASS SETTINGS
   // ====================
   typescript: {
-    ignoreBuildErrors: true, // Bypasses ALL TypeScript errors
+    ignoreBuildErrors: true, // Bypasses TypeScript errors (dev only)
   },
   eslint: {
-    ignoreDuringBuilds: true, // Disables ESLint completely
+    ignoreDuringBuilds: true, // Skips ESLint on Vercel
   },
-  reactStrictMode: false, // Disables React double-rendering in dev
+  reactStrictMode: false, // Optional for dev-like behavior
 
   // ====================
   // PERFORMANCE OPTIMIZATIONS
   // ====================
-  swcMinify: true, // Uses Rust-based SWC minifier (faster than Terser)
-  output: "standalone", // Creates self-contained deployment folder
+  output: "standalone", // Required for Vercel's serverless build
 
   // ====================
   // IMAGE HANDLING
   // ====================
   images: {
-    unoptimized: true, // Disables next/image optimization
-    domains: [], // Empty array bypasses domain validation
+    unoptimized: true,
+    domains: [],
   },
 
   // ====================
   // EXPERIMENTAL OVERRIDES
   // ====================
   experimental: {
-    forceSwcTransforms: true, // Forces SWC even for node_modules
-    legacyBrowsers: false, // Disables IE11 support
-    outputFileTracingIgnores: ["**/*"], // Ignores all files in traces
-    serverComponentsExternalPackages: [], // Empty array allows all packages
+    forceSwcTransforms: true,
+    legacyBrowsers: false,
+    outputFileTracingIgnores: ["**/*"], // Use only if needed for deploy issues
   },
 
   // ====================
-  // SECURITY OVERRIDES (USE WITH CAUTION)
+  // SECURITY OVERRIDES
   // ====================
   headers: async () => [
     {
@@ -45,7 +43,7 @@ const nextConfig: NextConfig = {
       headers: [
         {
           key: "X-Force-Deploy",
-          value: "true", // Mock header to bypass security checks
+          value: "true",
         },
       ],
     },
@@ -55,16 +53,19 @@ const nextConfig: NextConfig = {
   // WEBPACK OVERRIDES
   // ====================
   webpack: (config) => {
-    config.resolve.fallback = { fs: false, path: false }; // Bypasses missing modules
+    config.resolve.fallback = {
+      fs: false,
+      path: false,
+    };
     return config;
   },
 
   // ====================
   // DEPLOYMENT HACKS
   // ====================
-  generateBuildId: () => "force-build-id", // Constant build ID
-  poweredByHeader: false, // Removes "X-Powered-By: Next.js"
-  staticPageGenerationTimeout: 1000, // 1 second timeout (default is 60)
+  generateBuildId: () => "force-build-id",
+  poweredByHeader: false,
+  staticPageGenerationTimeout: 1000,
 };
 
 export default nextConfig;
