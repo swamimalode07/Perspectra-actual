@@ -1,57 +1,35 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // ====================
-  // ERROR BYPASS SETTINGS
-  // ====================
-  typescript: {
-    ignoreBuildErrors: true, // Bypasses TypeScript errors (dev only)
-  },
-  eslint: {
-    ignoreDuringBuilds: true, // Skips ESLint on Vercel
-  },
-  reactStrictMode: false, // Optional for dev-like behavior
+  // ✅ Ensures better React debugging and strict mode behavior
+  reactStrictMode: true,
 
-  // ====================
-  // PERFORMANCE OPTIMIZATIONS
-  // ====================
-  output: "standalone", // Required for Vercel's serverless build
+  // ✅ Required for Vercel's serverless builds with custom logic like NextAuth
+  output: "standalone",
 
-  // ====================
-  // IMAGE HANDLING
-  // ====================
+  // ✅ Image handling (adjust domains if needed)
   images: {
-    unoptimized: true,
-    domains: [],
+    unoptimized: false,
+    domains: ["lh3.googleusercontent.com"], // Add custom image domains if needed
   },
 
-  // ====================
-  // EXPERIMENTAL OVERRIDES
-  // ====================
+  // ✅ Skip TypeScript errors during build
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  // ✅ Skip ESLint errors during build (e.g. on Vercel)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  // ✅ Recommended experimental features
   experimental: {
     forceSwcTransforms: true,
     legacyBrowsers: false,
-    outputFileTracingIgnores: ["**/*"], // Use only if needed for deploy issues
   },
 
-  // ====================
-  // SECURITY OVERRIDES
-  // ====================
-  headers: async () => [
-    {
-      source: "/(.*)",
-      headers: [
-        {
-          key: "X-Force-Deploy",
-          value: "true",
-        },
-      ],
-    },
-  ],
-
-  // ====================
-  // WEBPACK OVERRIDES
-  // ====================
+  // ✅ Fix for NextAuth: disables node core modules in the browser
   webpack: (config) => {
     config.resolve.fallback = {
       fs: false,
@@ -60,12 +38,8 @@ const nextConfig: NextConfig = {
     return config;
   },
 
-  // ====================
-  // DEPLOYMENT HACKS
-  // ====================
-  generateBuildId: () => "force-build-id",
+  // ✅ Optional: remove "Powered by Next.js" header
   poweredByHeader: false,
-  staticPageGenerationTimeout: 1000,
 };
 
 export default nextConfig;
